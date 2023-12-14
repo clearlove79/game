@@ -1,4 +1,4 @@
-const game = new Phaser.Game(600, 505, Phaser.AUTO, "game");
+const game = new Phaser.Game(288, 505, Phaser.AUTO, "game");
 
 game.States = {};
 
@@ -150,23 +150,23 @@ game.States.play = function () {
     this.hasStarted = true;
     this.score = 0;
 
-    // Start game elements and remove ready text
+    // 加载游戏元素并且把题目元素移除
     this.bg.autoScroll(-(this.gameSpeed / 10), 0);
     this.ground.autoScroll(-this.gameSpeed, 0);
     this.bird.body.gravity.y = 1150;
     this.readyText.destroy();
     this.playTip.destroy();
 
-    // Enable input for bird flight
+    // 启用鸟的飞行输入
     game.input.onDown.add(this.fly, this);
 
-    // Start generating pipes
+    // 开始生成管道
     game.time.events.loop(900, this.generatePipes, this);
     game.time.events.start();
   };
 
   this.handleCollisions = function () {
-    // Handle collisions with ground and pipes
+    // 处理与地面和管道的碰撞的函数
     game.physics.arcade.collide(
       this.bird,
       this.ground,
@@ -184,28 +184,28 @@ game.States.play = function () {
   };
 
   this.updateBirdRotation = function () {
-    // Update bird rotation angle
+    // 更新鸟的旋转角度的函数
     if (this.bird.angle < 90) {
       this.bird.angle += 2.5;
     }
   };
 
   this.fly = function () {
-    // Make the bird fly
+    // 让鸟飞翔的函数
     this.bird.body.velocity.y = -350;
     game.add.tween(this.bird).to({ angle: -30 }, 100, null, true, 0, 0, false);
     this.soundFly.play();
   };
 
   this.hitPipe = function () {
-    // Handle bird hitting a pipe
+    // 处理鸟撞到管道的函数
     if (this.gameIsOver) return;
     this.soundHitPipe.play();
     this.gameOver();
   };
 
   this.hitGround = function () {
-    // Handle bird hitting the ground
+    // 处理鸟撞到地面的函数
     if (this.hasHitGround) return;
     this.hasHitGround = true;
     this.soundHitGround.play();
@@ -213,34 +213,28 @@ game.States.play = function () {
   };
 
   this.gameOver = function (showText) {
-    // Handle game over
+    // 处理游戏结束的函数
     this.gameIsOver = true;
     this.stopGame();
 
-    // Display game over text if needed
     if (showText) this.showGameOverText();
   };
 
   this.stopGame = function () {
-    // Stop game elements
+    // 停止游戏元素的函数
     this.bg.stopScroll();
     this.ground.stopScroll();
     this.pipeGroup.forEachExists(function (pipe) {
       pipe.body.velocity.x = 0;
     }, this);
 
-    // Stop bird animation
     this.bird.animations.stop("fly", 0);
-
-    // Disable input for bird flight
     game.input.onDown.remove(this.fly, this);
-
-    // Stop generating pipes
     game.time.events.stop(true);
   };
 
   this.showGameOverText = function () {
-    // Display game over text and scoreboard
+    // 显示游戏结束文本和分数板的函数
     this.scoreText.destroy();
     game.bestScore = game.bestScore || 0;
 
@@ -280,7 +274,7 @@ game.States.play = function () {
   };
 
   this.generatePipes = function (gap) {
-    // Generate pipes
+    // 生成管道的函数
     gap = gap || 100;
     const position =
       505 -
@@ -313,7 +307,7 @@ game.States.play = function () {
   };
 
   this.resetPipe = function (topPipeY, bottomPipeY) {
-    // Reset pipes that went out of bounds
+    // 重置越界的管道的函数
     let i = 0;
 
     this.pipeGroup.forEachDead(function (pipe) {
@@ -331,7 +325,7 @@ game.States.play = function () {
   };
 
   this.checkScore = function (pipe) {
-    // Check and update the score
+    // 检查并更新分数的函数
     if (!pipe.hasScored && pipe.y <= 0 && pipe.x <= this.bird.x - 17 - 54) {
       pipe.hasScored = true;
       this.scoreText.text = ++this.score;
@@ -342,7 +336,7 @@ game.States.play = function () {
   };
 };
 
-// Add states to the game
+// 添加场景并且开始游戏
 game.state.add("boot", game.States.boot);
 game.state.add("preload", game.States.preload);
 game.state.add("menu", game.States.menu);
